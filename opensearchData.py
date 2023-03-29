@@ -51,6 +51,7 @@ else:
 
 
 def searchRawInfo(qtxt: str):
+  qcolor, qtype = qtxt.split(" ")
   query_denc = {
     'size': 3, # how many products we want
     '_source': ['product_id', 'product_family', 'product_category', 'product_sub_category', 'product_gender', 
@@ -58,11 +59,22 @@ def searchRawInfo(qtxt: str):
                 'product_short_description', 'product_attributes', 'product_image_path', 
                 'product_highlights', 'outfits_ids', 'outfits_products'],
     'query': {
-      'multi_match': {
-        'query': qtxt,
-        'fields': ['product_main_colour']
-      }
+    'bool': {
+      'must': [
+        {
+          'match': {
+            'product_main_colour': qcolor
+          }
+        },
+        {
+          'multi_match': {
+            'query': qtype,
+            'fields': ['product_category', 'product_sub_category']
+          }
+        }
+      ]
     }
+  }
   }
 
   response = client.search(
