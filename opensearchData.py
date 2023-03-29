@@ -1,20 +1,17 @@
 import pprint as pp
 import requests
 import json
-from tqdm import tqdm
 import pprint as pp
 from opensearchpy import OpenSearch
 from opensearchpy import helpers
 from PIL import Image
 import requests
-import pandas as pd
 import time
 import numpy as np
 
 
 import response_generate as rr
 
-from transformers import CLIPProcessor, CLIPModel
 
 host = 'api.novasearch.org'
 port = 443
@@ -53,9 +50,9 @@ else:
     print("Index not found")
 
 
-def searchRawInfo(qtxt):
+def searchRawInfo(qtxt: str):
   query_denc = {
-    'size': 3, #how many products we want
+    'size': 3, # how many products we want
     '_source': ['product_id', 'product_family', 'product_category', 'product_sub_category', 'product_gender', 
                 'product_main_colour', 'product_second_color', 'product_brand', 'product_materials', 
                 'product_short_description', 'product_attributes', 'product_image_path', 
