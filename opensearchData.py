@@ -18,8 +18,8 @@ port = 443
 
 index_name = "farfetch_images"
 
-user = 'ifetch' # Add your user name here.
-password = 'S48YdnMQ' # Add your user password here. For testing only. Don't store credentials in code.
+user = 'ifetch'  # Add your user name here.
+password = 'S48YdnMQ'  # Add your user password here. For testing only. Don't store credentials in code.
 
 
 client = OpenSearch(
@@ -51,42 +51,41 @@ else:
 
 
 def searchRawInfo(qtxt: str):
-  qcolor, qtype = qtxt.split(" ")
-  query_denc = {
+    qcolor, qtype = qtxt.split(" ")
+    query_denc = {
     'size': 3, # how many products we want
-    '_source': ['product_id', 'product_family', 'product_category', 'product_sub_category', 'product_gender', 
-                'product_main_colour', 'product_second_color', 'product_brand', 'product_materials', 
-                'product_short_description', 'product_attributes', 'product_image_path', 
+    '_source': ['product_id', 'product_family', 'product_category', 'product_sub_category', 'product_gender',
+                'product_main_colour', 'product_second_color', 'product_brand', 'product_materials',
+                'product_short_description', 'product_attributes', 'product_image_path',
                 'product_highlights', 'outfits_ids', 'outfits_products'],
     'query': {
-    'bool': {
-      'must': [
-        {
-          'match': {
-            'product_main_colour': qcolor
-          }
-        },
-        {
-          'multi_match': {
-            'query': qtype,
-            'fields': ['product_category', 'product_sub_category']
-          }
+        'bool': {
+          'must': [
+            {
+              'match': {
+                'product_main_colour': qcolor
+              }
+            },
+            {
+              'multi_match': {
+                'query': qtype,
+                'fields': ['product_category', 'product_sub_category']
+              }
+            }
+          ]
         }
-      ]
+        }
     }
-  }
-  }
 
-  response = client.search(
+    response = client.search(
       body = query_denc,
       index = index_name
-  )
+    )
 
-  results = [r['_source'] for r in response['hits']['hits']]
-  print('\nSearch results:')
-  results
+    results = [r['_source'] for r in response['hits']['hits']]
+    print('\nSearch results:')
+    results
 
-
-  pp.pprint(response)
-  return response
+    pp.pprint(response)
+    return response
 
