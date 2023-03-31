@@ -32,7 +32,21 @@ def dialog_turn():
 
     userUtterance = data.get('utterance')
 
-        response = opensearchData.searchRawInfo(userUtterance)
+    if userUtterance == "test":
+        test.test_color_cloth(10)
+        print("Combined test done")
+        test.test_one_category('clothes', 5)
+        print("Clothes test done")
+        test.test_one_category('colors', 5)
+        print("Colors test done")
+        jsonString = json.dumps({
+            "has_response": True,
+            "recommendations": '',
+            "response": "Test done",
+            "system_action": ""})
+        return jsonString
+
+    response = opensearchData.searchRawInfo(userUtterance)
 
     if response['hits']['total']['value'] > 0:
         response_recommendations = r.response_to_recommendations(response)
