@@ -1,26 +1,13 @@
 import pprint as pp
-import requests
-import json
-import pprint as pp
 from opensearchpy import OpenSearch
-from opensearchpy import helpers
-from PIL import Image
-import requests
-import time
-import numpy as np
-
-
-import response_generate as rr
-
 
 host = 'api.novasearch.org'
 port = 443
 
 index_name = "farfetch_images"
 
-user = 'ifetch'  # Add your user name here.
+user = 'ifetch'  # Add your username here.
 password = 'S48YdnMQ'  # Add your user password here. For testing only. Don't store credentials in code.
-
 
 client = OpenSearch(
     hosts = [{'host': host, 'port': port}],
@@ -34,7 +21,8 @@ client = OpenSearch(
 )
 
 if client.indices.exists(index = index_name):
-
+    print("Index found")
+    """
     print('\n----------------------------------------------------------------------------------- INDEX SETTINGS')
     settings = client.indices.get_settings(index = index_name)
     pp.pprint(settings)
@@ -44,8 +32,7 @@ if client.indices.exists(index = index_name):
     pp.pprint(mappings)
 
     print('\n----------------------------------------------------------------------------------- INDEX #DOCs')
-    print(client.count(index = index_name))
-
+    print(client.count(index = index_name))"""
 else:
     print("Index not found")
 
@@ -53,27 +40,27 @@ else:
 def searchRawInfo(qtxt: str):
     qcolor, qtype = qtxt.split(" ")
     query_denc = {
-    'size': 3, # how many products we want
-    '_source': ['product_id', 'product_family', 'product_category', 'product_sub_category', 'product_gender',
-                'product_main_colour', 'product_second_color', 'product_brand', 'product_materials',
-                'product_short_description', 'product_attributes', 'product_image_path',
-                'product_highlights', 'outfits_ids', 'outfits_products'],
-    'query': {
-        'bool': {
-          'must': [
-            {
-              'match': {
-                'product_main_colour': qcolor
-              }
-            },
-            {
-              'multi_match': {
-                'query': qtype,
-                'fields': ['product_category', 'product_sub_category']
-              }
+        'size': 3,  # how many products we want
+        '_source': ['product_id', 'product_family', 'product_category', 'product_sub_category', 'product_gender',
+                    'product_main_colour', 'product_second_color', 'product_brand', 'product_materials',
+                    'product_short_description', 'product_attributes', 'product_image_path',
+                    'product_highlights', 'outfits_ids', 'outfits_products'],
+        'query': {
+            'bool': {
+              'must': [
+                {
+                  'match': {
+                    'product_main_colour': qcolor
+                  }
+                },
+                {
+                  'multi_match': {
+                    'query': qtype,
+                    'fields': ['product_category', 'product_sub_category']
+                  }
+                }
+              ]
             }
-          ]
-        }
         }
     }
 
@@ -81,11 +68,9 @@ def searchRawInfo(qtxt: str):
       body = query_denc,
       index = index_name
     )
-
+    """
     results = [r['_source'] for r in response['hits']['hits']]
     print('\nSearch results:')
-    results
-
-    pp.pprint(response)
+    pp.pprint(results)
+    """
     return response
-

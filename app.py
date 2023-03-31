@@ -4,6 +4,7 @@ import json
 
 import response_generate as r
 import opensearchData
+import test
 
 app = Flask(__name__)  # create the Flask app
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -12,33 +13,40 @@ cors = CORS(app)
 
 @app.route('/', methods=['POST'])
 def dialog_turn():
-    if request.is_json:
-        data = request.json
-        print(data)
-        print(request.headers)
-        print(data.get('utterance'))
-        print(data.get('session_id'))
-        print(data.get('user_action'))
-        print(data.get('interface_selected_product_id'))
-        print(data.get('image'))
+    if not request.is_json:  # if the request isn't json display an error message
+        jsonString = json.dumps({
+                "has_response": True,
+                "recommendations": '',
+                "response": "An error occurred, please try again later.",
+                "system_action": ""})
+        return jsonString
 
-        userUtterance = data.get('utterance')
+    data = request.json
+    """ print(data)
+    print(request.headers)
+    print(data.get('utterance'))
+    print(data.get('session_id'))
+    print(data.get('user_action'))
+    print(data.get('interface_selected_product_id'))
+    print(data.get('image')) """
+
+    userUtterance = data.get('utterance')
 
         response = opensearchData.searchRawInfo(userUtterance)
 
-        if response['hits']['total']['value'] > 0:
-            response_recommendations = r.response_to_recommendations(response)
-            response_prompt = "Here's what I found for you"
-        else:
-            response_recommendations = []
-            response_prompt = "Sorry no item were found with what you asked, try something else.\n"
+    if response['hits']['total']['value'] > 0:
+        response_recommendations = r.response_to_recommendations(response)
+        response_prompt = "Here's what I found for you"
+    else:
+        response_recommendations = []
+        response_prompt = "Sorry no item were found with what you asked, try something else.\n"
 
-        responseDict = {
-            "has_response": True,
-            "recommendations": response_recommendations,
-            "response": response_prompt,
-            "system_action": ""}
-        jsonString = json.dumps(responseDict)
+    responseDict = {
+        "has_response": True,
+        "recommendations": response_recommendations,
+        "response": response_prompt,
+        "system_action": ""}
+    jsonString = json.dumps(responseDict)
 
     return jsonString
 
