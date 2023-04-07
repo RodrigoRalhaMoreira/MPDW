@@ -1,6 +1,6 @@
 from flask import Flask, request
 from flask_cors import CORS
-import json
+import json 
 
 import response_generate as r
 import opensearchData
@@ -22,6 +22,7 @@ def dialog_turn():
         return jsonString
 
     data = request.json
+    print(f'Request data: {data}')  
     """ print(data)
     print(request.headers)
     print(data.get('utterance'))
@@ -45,15 +46,18 @@ def dialog_turn():
             "response": "Test done",
             "system_action": ""})
         return jsonString
-
-    response = opensearchData.searchRawInfo(userUtterance)
-
-    if response['hits']['total']['value'] > 0:
-        response_recommendations = r.response_to_recommendations(response)
-        response_prompt = "Here's what I found for you"
-    else:
+    try:
+        response = opensearchData.search_raw_info(userUtterance)
+        print(f'Search response: {response}')
+        if response['hits']['total']['value'] > 0:  
+            response_recommendations = r.response_to_recommendations(response)
+            response_prompt = "Here's what I found for you"
+        else:
+            response_recommendations = []
+            response_prompt = "Sorry no item were found with what you asked, try something else.\n"
+    except ValueError as e:
         response_recommendations = []
-        response_prompt = "Sorry no item were found with what you asked, try something else.\n"
+        response_prompt = str(e)
 
     responseDict = {
         "has_response": True,
