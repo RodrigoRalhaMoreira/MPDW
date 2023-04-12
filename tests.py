@@ -36,7 +36,7 @@ clothes = ["coats", "denim", "jackets", "pants", "shirt", "shorts", "skirts", "s
 genders = ["men", "women"]
 
 
-def generate_search_string(brand=None, color=None, cloth=None, gender=None):
+def generate_search_string(brand: str = None, color: str = None, cloth: str = None, gender: str = None):
     if not brand:
         brand = random.choice(brands)
     if not color:
@@ -49,7 +49,7 @@ def generate_search_string(brand=None, color=None, cloth=None, gender=None):
     return f"brand:{brand} color:{color} category:{cloth} gender:{gender}"
 
 
-def run_test(search_string):
+def run_test(search_string: str):
     result = search.search_raw_info(search_string)
     if result["hits"]["total"]["value"] <= 0:
         print(f"Error trying: {search_string}" + "\n")

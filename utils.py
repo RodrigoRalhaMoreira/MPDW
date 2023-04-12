@@ -1,4 +1,4 @@
-def validate_weight(value):
+def validate_weight(value: int) -> int:
     try:
         weight = float(value)
         if not 1 <= weight <= 10:
@@ -8,7 +8,7 @@ def validate_weight(value):
         raise ValueError(f"Invalid weight value: {value}. Weight should be a number between 1 and 10.") from e
 
 
-def parse_search_string(search_string):
+def parse_search_string(search_string: str) -> tuple[dict[str, str], dict[str, int]]:
     search_terms = search_string.split()
     attributes = {}
     weights = {"color_weight": 1, "gender_weight": 1, "category_weight": 1, "brand_weight": 1}
