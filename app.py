@@ -20,6 +20,7 @@ cors = CORS(app)
     Args:
         data (dict): A dictionary containing the user's request data.
     Returns:
+
         dict: A dictionary containing the response data to be sent back to the user.
 """
 
@@ -31,6 +32,17 @@ def process_request(data: dict):
         tests.run_tests()
         return {"has_response": True, "recommendations": "", "response": "Test done", "system_action": ""}
     try:
+        if user_utterance == "!help":
+            return {
+            "has_response": True,
+            "recommendations": "",
+            "response": """Enter your search in the following order: color, gender, category, brand: \n
+            For debug mode send a message using this template. !search color:<a color> gender:<a gender> category:<a category> band:<a brand>""",
+            "system_action": ""}
+
+        if user_utterance[0:7] == "!search":
+            user_utterance = user_utterance[7:]
+
         search_response = search.search_raw_info(user_utterance)
         logging.info(f"Search response: {search_response}")
 
