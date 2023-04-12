@@ -1,26 +1,21 @@
 import search
 import random
 
-categories = [
-  "brands",
-  "colors",
-  "clothes",
-  "genders"
-]
+categories = ["brands", "colors", "clothes", "genders"]
 
 brands = [
-  "alexander-mcqueen",
-  "balenciaga",
-  "balmain",
-  "burberry",
-  "dolce-&-gabbana",
-  "dsquared2",
-  "gucci",
-  "moncler",
-  "off-white",
-  "palm-angers",
-  "prada",
-  "versace"
+    "alexander-mcqueen",
+    "balenciaga",
+    "balmain",
+    "burberry",
+    "dolce-&-gabbana",
+    "dsquared2",
+    "gucci",
+    "moncler",
+    "off-white",
+    "palm-angers",
+    "prada",
+    "versace",
 ]
 colors = [
     "black",
