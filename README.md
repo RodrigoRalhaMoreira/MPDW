@@ -26,8 +26,9 @@ The Project Setup uses the config.py file which contains information like the cr
 
 1. Open the Command Prompt or PowerShell.
 2. Set the environment variables using the set command (replace your_username and your_password with the actual values):
-   - set OPENSEARCH_USER=(user id provided by professor)
-   - set OPENSEARCH_PASSWORD=(password provided by professor)
+
+- set OPENSEARCH_USER=(user id provided by professor)
+- set OPENSEARCH_PASSWORD=(password provided by professor)
 
 These environment variables will only be available for the current session. When you close the Command Prompt or PowerShell, the variables will be lost.
 
