@@ -26,8 +26,8 @@ The Project Setup uses the config.py file which contains information like the cr
 
 1. Open the Command Prompt or PowerShell.
 2. Set the environment variables using the set command (replace your_username and your_password with the actual values):
-   2a. set OPENSEARCH_USER=ifetch
-   2b. set OPENSEARCH_PASSWORD=S48YdnMQ
+   - set OPENSEARCH_USER=(user id provided by professor)
+   - set OPENSEARCH_PASSWORD=(password provided by professor)
 
 These environment variables will only be available for the current session. When you close the Command Prompt or PowerShell, the variables will be lost.
 
@@ -47,6 +47,8 @@ These environment variables will only be available for the current session. When
 
 1. nano ~/.bashrc
 2. Scroll to the end of the file and add the following lines (replace your_username and your_password with the actual values):
-   2a. export OPENSEARCH_USER=ifetch
-   2b. export OPENSEARCH_PASSWORD=S48YdnMQ
+
+- export OPENSEARCH_USER=(user id provided by professor)
+- export OPENSEARCH_PASSWORD=(password provided by professor)
+
 3. after saving run: source ~/.bashrc
