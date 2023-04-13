@@ -34,13 +34,15 @@ def process_request(data: dict):
     try:
         if user_utterance == "!help":
             return {
-            "has_response": True,
-            "recommendations": "",
-            "response": """Enter your search in the following order: color, gender, category, brand: \n
-            For debug mode send a message using this template. !search color:<a color> gender:<a gender> category:<a category> band:<a brand>""",
-            "system_action": ""}
+                "has_response": True,
+                "recommendations": "",
+                "response": """Enter your search in the following order: color, gender, category, brand: \n
+                            For debug mode send a message using this template.
+                            !search color:<a color> gender:<a gender> category:<a category> band:<a brand>""",
+                "system_action": "",
+            }
 
-        if user_utterance[0:7] == "!search":
+        if user_utterance[:7] == "!search":
             user_utterance = user_utterance[7:]
 
         search_response = search.search_raw_info(user_utterance)

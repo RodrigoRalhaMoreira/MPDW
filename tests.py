@@ -1,26 +1,21 @@
 import search
 import random
 
-categories = [
-  "brands",
-  "colors",
-  "clothes",
-  "genders"
-]
+categories = ["brands", "colors", "clothes", "genders"]
 
 brands = [
-  "alexander-mcqueen",
-  "balenciaga",
-  "balmain",
-  "burberry",
-  "dolce-&-gabbana",
-  "dsquared2",
-  "gucci",
-  "moncler",
-  "off-white",
-  "palm-angers",
-  "prada",
-  "versace"
+    "alexander-mcqueen",
+    "balenciaga",
+    "balmain",
+    "burberry",
+    "dolce-&-gabbana",
+    "dsquared2",
+    "gucci",
+    "moncler",
+    "off-white",
+    "palm-angers",
+    "prada",
+    "versace",
 ]
 colors = [
     "black",
@@ -41,7 +36,7 @@ clothes = ["coats", "denim", "jackets", "pants", "shirt", "shorts", "skirts", "s
 genders = ["men", "women"]
 
 
-def generate_search_string(brand=None, color=None, cloth=None, gender=None):
+def generate_search_string(brand: str = None, color: str = None, cloth: str = None, gender: str = None):
     if not brand:
         brand = random.choice(brands)
     if not color:
@@ -54,7 +49,7 @@ def generate_search_string(brand=None, color=None, cloth=None, gender=None):
     return f"brand:{brand} color:{color} category:{cloth} gender:{gender}"
 
 
-def run_test(search_string):
+def run_test(search_string: str):
     result = search.search_raw_info(search_string)
     if result["hits"]["total"]["value"] <= 0:
         print(f"Error trying: {search_string}" + "\n")
