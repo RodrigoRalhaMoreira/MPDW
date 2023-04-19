@@ -45,7 +45,8 @@ def process_request(data: dict):
         if user_utterance[:7] == "!search":
             user_utterance = user_utterance[7:]
 
-        search_response = search.search_raw_info(user_utterance)
+        search_response = search.search_natural_text(user_utterance)
+        # search_response = search.search_raw_info(user_utterance)
         logging.info(f"Search response: {search_response}")
 
         if search_response["hits"]["total"]["value"] > 0:

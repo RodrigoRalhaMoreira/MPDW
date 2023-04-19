@@ -3,6 +3,13 @@ from config import CONFIG
 from opensearchpy import OpenSearch
 from utils import parse_search_string
 
+import torch.nn.functional as F
+from transformers import CLIPProcessor, CLIPModel, CLIPTokenizer
+
+model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
+processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
+tokenizer = CLIPTokenizer.from_pretrained("openai/clip-vit-base-patch32")
+
 # Use configuration variables from CONFIG.py
 client = OpenSearch(
     hosts=[{"host": CONFIG["host"], "port": CONFIG["port"]}],
@@ -105,8 +112,54 @@ def search_raw_info(search_string: str):
     # Perform the search query
     return client.search(body=query_denc, index=CONFIG["index_name"])
 
-
 # Example usage:
 search_string = "color:black gender:men brand:Nike color_weight:3 gender_weight:1 brand_weight:9"
 results = search_raw_info(search_string)
 pp.pprint(results)
+
+
+
+def search_natural_text(search_string: str):
+  inputs = tokenizer([search_string], padding=True, return_tensors="pt")
+
+  text_features = F.normalize(model.get_text_features(**inputs))
+
+	# inputs = processor(text=[search_query], images=[], return_tensors="pt", padding=True)
+
+	#text_embeds = F.normalize(outputs["text_embeds"])
+
+  query_denc = {
+		'size': 3,
+		'_source': ['product_id',
+              	'product_family',
+               	'product_category',
+                'product_sub_category',
+                'product_gender', 
+								'product_main_colour',
+     						'product_second_color',
+           			'product_brand', 'product_materials', 
+								'product_short_description',
+								'product_attributes',
+								'product_image_path', 
+								'product_highlights',
+								'outfits_ids',
+								'outfits_products',
+     						'image_embedding'],
+		"query": {
+							"knn": {
+								"combined_embedding": {
+								"vector": text_features[0].detach().numpy(),
+								"k": 2
+								}
+							}
+						}
+	}
+
+  return client.search(
+		body = query_denc,
+		index = CONFIG["index_name"]
+  )
+
+	# results = [r['_source'] for r in response['hits']['hits']]
+	# print('\nSearch results:')
+	# results
