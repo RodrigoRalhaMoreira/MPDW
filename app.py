@@ -27,6 +27,7 @@ cors = CORS(app)
 
 def process_request(data: dict):
     user_utterance = data.get("utterance")
+    file = data.get("file")
 
     if user_utterance == "test":
         tests.run_tests()
@@ -44,8 +45,7 @@ def process_request(data: dict):
 
         if user_utterance[:7] == "!search":
             user_utterance = user_utterance[7:]
-
-        search_response = search.search_natural_text(user_utterance)
+        search_response = search.search_combined(user_utterance, file)
         # search_response = search.search_raw_info(user_utterance)
         logging.info(f"Search response: {search_response}")
 
