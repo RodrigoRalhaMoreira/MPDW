@@ -33,21 +33,30 @@ def process_request(data: dict):
         tests.run_tests()
         return {"has_response": True, "recommendations": "", "response": "Test done", "system_action": ""}
     try:
+        #Run help command
         if user_utterance == "!help":
             return {
                 "has_response": True,
                 "recommendations": "",
-                "response": """Enter your search in the following order: color, gender, category, brand: \n
-                            For debug mode send a message using this template.
-                            !search color:<a color> gender:<a gender> category:<a category> band:<a brand>""",
+                "response": """You can proceed with one of the following ways: \n
+                            1) For debug mode send a message using this template.
+                            !debug color:<a color> gender:<a gender> category:<a category> brand:<a brand> \n
+                            2) For natural language search just type what you want to search""",
                 "system_action": "",
             }
-
-        if user_utterance[:7] == "!search":
-            user_utterance = user_utterance[7:]
-        search_response = search.search_combined(user_utterance, file)
-        # search_response = search.search_raw_info(user_utterance)
-        logging.info(f"Search response: {search_response}")
+            
+        #Run debug command
+        if user_utterance[:6] == "!debug":
+          user_utterance = user_utterance[6:]
+          search_response = search.search_raw_info(user_utterance)
+        else:
+          #Run natural language query without image uploaded
+          if file != None:
+            search_response = search.search_combined(user_utterance, file)
+          else:
+          #Run natural language query with image uploaded
+            search_response = search.search_natural_text(user_utterance)
+          logging.info(f"Search response: {search_response}")
 
         if search_response["hits"]["total"]["value"] > 0:
             response_recommendations = response.response_to_recommendations(search_response)
