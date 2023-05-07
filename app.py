@@ -33,7 +33,7 @@ def process_request(data: dict):
         tests.run_tests()
         return {"has_response": True, "recommendations": "", "response": "Test done", "system_action": ""}
     try:
-        #Run help command
+        # Run help command
         if user_utterance == "!help":
             return {
                 "has_response": True,
@@ -44,19 +44,19 @@ def process_request(data: dict):
                             2) For natural language search just type what you want to search""",
                 "system_action": "",
             }
-            
-        #Run debug command
+
+        # Run debug command
         if user_utterance[:6] == "!debug":
-          user_utterance = user_utterance[6:]
-          search_response = search.search_raw_info(user_utterance)
+            user_utterance = user_utterance[6:]
+            search_response = search.search_raw_info(user_utterance)
         else:
-          #Run natural language query without image uploaded
-          if file != None:
-            search_response = search.search_combined(user_utterance, file)
-          else:
-          #Run natural language query with image uploaded
-            search_response = search.search_natural_text(user_utterance)
-          logging.info(f"Search response: {search_response}")
+            # Run natural language query without image uploaded
+            if file is not None:
+                search_response = search.search_combined(user_utterance, file)
+            else:
+                # Run natural language query with image uploaded
+                search_response = search.search_natural_text(user_utterance)
+            logging.info(f"Search response: {search_response}")
 
         if search_response["hits"]["total"]["value"] > 0:
             response_recommendations = response.response_to_recommendations(search_response)
