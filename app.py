@@ -7,6 +7,7 @@ from flask import Flask, request
 import tests
 import search
 import response
+import dialog
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -14,6 +15,9 @@ logging.basicConfig(level=logging.INFO)
 app = Flask(__name__)
 app.config["CORS_HEADERS"] = "Content-Type"
 cors = CORS(app)
+global product_found
+product_found = None
+
 
 """
     Process the user's request and return the appropriate response.
@@ -26,6 +30,7 @@ cors = CORS(app)
 
 
 def process_request(data: dict):
+    global product_found 
     user_utterance = data.get("utterance")
     file = data.get("file")
 
@@ -51,14 +56,39 @@ def process_request(data: dict):
             search_response = search.search_raw_info(user_utterance)
         else:
             # Run natural language query without image uploaded
-            if file is not None:
-                search_response = search.search_combined(user_utterance, file)
+            # if file is not None:
+            #     search_response = search.search_combined(user_utterance, file)
+            # else:
+            #     # Run natural language query with image uploaded
+            #     search_response = search.search_natural_text(user_utterance)
+            # logging.info(f"Search response: {search_response}")
+            
+            if(dialog.get_utterance_intent(user_utterance) == "user_qa_product_description" ):
+              response_prompt = dialog.get_bot_response(user_utterance, product_found)
+              
+              return {
+                "has_response": True,
+                "recommendations": [],
+                "response": response_prompt,
+                "system_action": "",
+              }
+            
+            elif(dialog.get_utterance_intent(user_utterance) != "user_request_get_products" ):
+              response_prompt = dialog.get_bot_response(user_utterance, None)
+              return {
+                "has_response": True,
+                "recommendations": [],
+                "response": response_prompt,
+                "system_action": "",
+              }
+              
             else:
-                # Run natural language query with image uploaded
-                search_response = search.search_natural_text(user_utterance)
-            logging.info(f"Search response: {search_response}")
+              search_response = dialog.get_bot_response(user_utterance, None)
+               
+            
 
         if search_response["hits"]["total"]["value"] > 0:
+            product_found = search_response
             response_recommendations = response.response_to_recommendations(search_response)
             response_prompt = "Here's what I found for you"
         else:
