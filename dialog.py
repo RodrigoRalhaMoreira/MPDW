@@ -68,10 +68,6 @@ def get_utterance_intent(utterance: str):
   return get_human_readable_output(utterance).get_intent()
 
 
-# print(get_key_value_parameters(UTTERANCE2))
-# print(get_utterance_intent("Help me to find a prada blue suit"))
-# print(get_key_value_parameters("Help me to find a prada blue suit"))
-
 def get_bot_response(utterance: str, product_found: any):
   user_intent = get_utterance_intent(utterance)
   
@@ -83,24 +79,20 @@ def get_bot_response(utterance: str, product_found: any):
     
   elif(user_intent == 'user_request_get_products'):
     result = search.search_natural_text(utterance)
-    if result["hits"]["total"]["value"] > 0:
-      print("product_found!")
-      print(get_key_value_parameters(utterance))
-    else:
-      print('I cant retrieve products right now')
+    if result["hits"]["total"]["value"] <= 0:
+      return "I cant retrieve products right now"
     
     return result
     
   elif(user_intent == 'user_qa_product_description'):
     if(product_found is None):
-      return 'You must choose a product before.'
-      print('You must choose a product before.')
-    else:
-      product_index = get_product_index(utterance)
-      if (product_index == -1):
-        return "unknown ordinality"
-      # return product_found["hits"]["hits"][product_index]
-      return "Here are some details:\n"+response.response_to_details(product_found["hits"]["hits"][product_index])
+      return 'You must search items before trying to get some details about them.'
+    
+    product_index = get_product_index(utterance)
+    if (product_index == -1):
+      return "Please be more specific on which item do you want more details about."
+    
+    return "Here are some details:\n"+response.response_to_details(product_found["hits"]["hits"][product_index])
  
 
 def get_product_index( utterance: str):
@@ -108,9 +100,7 @@ def get_product_index( utterance: str):
     return 0
   if(utterance.find("second")>0):
     return 1
-  if(utterance.find("third")>0):
-    return 2
-  return -1
+  return 2 if (utterance.find("third")>0 or utterance.find("last") > 0) else -1
 
 
     
