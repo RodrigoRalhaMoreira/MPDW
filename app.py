@@ -2,6 +2,7 @@ import json
 import logging
 from flask_cors import CORS
 from flask import Flask, request
+from googletrans import Translator
 
 # Import custom modules
 import tests
@@ -17,6 +18,8 @@ app.config["CORS_HEADERS"] = "Content-Type"
 cors = CORS(app)
 global product_found
 product_found = None
+
+tr = Translator()
 
 
 """
@@ -34,6 +37,8 @@ def process_request(data: dict):
     user_utterance = data.get("utterance")
     file = data.get("file")
 
+    if user_utterance == "Hi!":
+        return {"has_response": True, "recommendations": "", "response": "Hello, I'm your virtual shopping chat bot, I can suggest you clothes in every languages", "system_action": ""}
     if user_utterance == "test":
         tests.run_tests()
         return {"has_response": True, "recommendations": "", "response": "Test done", "system_action": ""}
@@ -55,6 +60,11 @@ def process_request(data: dict):
             user_utterance = user_utterance[6:]
             search_response = search.search_raw_info(user_utterance)
         else:
+
+
+            language = tr.detect(user_utterance).lang
+            if language != "en":
+                user_utterance = tr.translate(user_utterance).text
             
             if(dialog.get_utterance_intent(user_utterance) == "user_qa_product_description" ):
               response_prompt = dialog.get_bot_response(user_utterance, product_found, None)
@@ -87,6 +97,7 @@ def process_request(data: dict):
         else:
             response_recommendations = []
             response_prompt = "Sorry no item were found with what you asked, try something else.\n"
+
     except ValueError as e:
         logging.error(f"Error processing request: {e}")
         response_recommendations = []
