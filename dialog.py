@@ -37,9 +37,6 @@ add_special_tokens_to_model_and_tokenizer(
     ['I don\'t care', '[SEP]', '[SEP]', '[CLS]']
 )
 
-UTTERANCE1 = "find me a black suit please"
-UTTERANCE2 = "what kind of suit should i wear to my sister's wedding"
-
 GREETING = ["Hello! How can I help you?", "Hi, I'm here to help you!"]
 GOODBYE = ["Bye!"]
 
@@ -63,14 +60,18 @@ def get_key_value_parameters(utterance: str):
 def get_all_possible_intents():
   return model.intent_keys
 
+print("get_all_possible_intents")
+print(get_all_possible_intents())
+
   
 def get_utterance_intent(utterance: str):
   return get_human_readable_output(utterance).get_intent()
 
 
-def get_bot_response(utterance: str, product_found: any):
+def get_bot_response(utterance: str, product_found: any, file: any):
   user_intent = get_utterance_intent(utterance)
-  
+  print("USER INTENT")
+  print(user_intent)
   if(user_intent == 'user_neutral_greeting'):
     return GREETING[random.randint(0, len(GREETING)-1)]
   
@@ -78,7 +79,12 @@ def get_bot_response(utterance: str, product_found: any):
     return GOODBYE[random.randint(0, len(GOODBYE)-1)]
     
   elif(user_intent == 'user_request_get_products'):
-    result = search.search_natural_text(utterance)
+    if file is None:
+      result = search.search_natural_text(utterance)
+    else:
+      
+      result = search.search_combined(utterance, file)
+      
     if result["hits"]["total"]["value"] <= 0:
       return "I cant retrieve products right now"
     
@@ -92,7 +98,7 @@ def get_bot_response(utterance: str, product_found: any):
     if (product_index == -1):
       return "Please be more specific on which item do you want more details about."
     
-    return "Here are some details:\n"+response.response_to_details(product_found["hits"]["hits"][product_index])
+    return f'Here are some details:\n {response.response_to_details(product_found["hits"]["hits"][product_index])}'
  
 
 def get_product_index( utterance: str):
@@ -101,6 +107,5 @@ def get_product_index( utterance: str):
   if(utterance.find("second")>0):
     return 1
   return 2 if (utterance.find("third")>0 or utterance.find("last") > 0) else -1
-
 
     

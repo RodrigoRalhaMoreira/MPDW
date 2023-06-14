@@ -55,16 +55,9 @@ def process_request(data: dict):
             user_utterance = user_utterance[6:]
             search_response = search.search_raw_info(user_utterance)
         else:
-            # Run natural language query without image uploaded
-            # if file is not None:
-            #     search_response = search.search_combined(user_utterance, file)
-            # else:
-            #     # Run natural language query with image uploaded
-            #     search_response = search.search_natural_text(user_utterance)
-            # logging.info(f"Search response: {search_response}")
             
             if(dialog.get_utterance_intent(user_utterance) == "user_qa_product_description" ):
-              response_prompt = dialog.get_bot_response(user_utterance, product_found)
+              response_prompt = dialog.get_bot_response(user_utterance, product_found, None)
               
               return {
                 "has_response": True,
@@ -74,7 +67,7 @@ def process_request(data: dict):
               }
             
             elif(dialog.get_utterance_intent(user_utterance) != "user_request_get_products" ):
-              response_prompt = dialog.get_bot_response(user_utterance, None)
+              response_prompt = dialog.get_bot_response(user_utterance, None, file)
               return {
                 "has_response": True,
                 "recommendations": [],
@@ -83,7 +76,7 @@ def process_request(data: dict):
               }
               
             else:
-              search_response = dialog.get_bot_response(user_utterance, None)
+              search_response = dialog.get_bot_response(user_utterance, None, None)
                
             
 
