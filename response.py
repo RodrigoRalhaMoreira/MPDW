@@ -16,3 +16,19 @@ def response_to_recommendations(response: dict) -> list[dict]:
         }
         for item in response["hits"]["hits"]
     ]
+
+
+def response_to_details(item: dict) -> str:
+    aux = {
+            "id": item["_source"]["product_id"],
+            "brand": item["_source"]["product_brand"],
+            "description": item["_source"]["product_short_description"],
+            "image_path": item["_source"]["product_image_path"],
+            "materials": item["_source"]["product_materials"],
+            
+    }
+
+    return f'Product ID: {aux["id"]}\nBrand: {aux["brand"]}\nDescription: {aux["description"]}\nProduct Materials: {aux["materials"]}\n'
+
+
+
