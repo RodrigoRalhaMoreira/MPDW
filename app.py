@@ -60,33 +60,56 @@ def process_request(data: dict):
             user_utterance = user_utterance[6:]
             search_response = search.search_raw_info(user_utterance)
         else:
-
-
             language = tr.detect(user_utterance).lang
+
             if language != "en":
-                user_utterance = tr.translate(user_utterance).text
+              user_utterance = tr.translate(user_utterance).text
             
-            if(dialog.get_utterance_intent(user_utterance) == "user_qa_product_description" ):
-              response_prompt = dialog.get_bot_response(user_utterance, product_found, None)
+              if(dialog.get_utterance_intent(user_utterance) == "user_qa_product_description" ):
+                response_prompt = tr.translate(dialog.get_bot_response(tr.translate(user_utterance).text, product_found, None), dest=language).text
+                
+                return {
+                  "has_response": True,
+                  "recommendations": [],
+                  "response": response_prompt,
+                  "system_action": "",
+                }
               
-              return {
-                "has_response": True,
-                "recommendations": [],
-                "response": response_prompt,
-                "system_action": "",
-              }
+              elif(dialog.get_utterance_intent(user_utterance) != "user_request_get_products" ):
+                response_prompt = tr.translate(dialog.get_bot_response(tr.translate(user_utterance).text, None, file), dest=language).text
+                return {
+                  "has_response": True,
+                  "recommendations": [],
+                  "response": response_prompt,
+                  "system_action": "",
+                }
+                
+              else:
+                search_response = tr.translate(dialog.get_bot_response(tr.translate(user_utterance).text, None, None), dest=language).text
             
-            elif(dialog.get_utterance_intent(user_utterance) != "user_request_get_products" ):
-              response_prompt = dialog.get_bot_response(user_utterance, None, file)
-              return {
-                "has_response": True,
-                "recommendations": [],
-                "response": response_prompt,
-                "system_action": "",
-              }
-              
+            
             else:
-              search_response = dialog.get_bot_response(user_utterance, None, None)
+              if(dialog.get_utterance_intent(user_utterance) == "user_qa_product_description" ):
+                response_prompt = dialog.get_bot_response(user_utterance, product_found, None)
+                
+                return {
+                  "has_response": True,
+                  "recommendations": [],
+                  "response": response_prompt,
+                  "system_action": "",
+                }
+              
+              elif(dialog.get_utterance_intent(user_utterance) != "user_request_get_products" ):
+                response_prompt = dialog.get_bot_response(user_utterance, None, file)
+                return {
+                  "has_response": True,
+                  "recommendations": [],
+                  "response": response_prompt,
+                  "system_action": "",
+                }
+                
+              else:
+                search_response = dialog.get_bot_response(user_utterance, None, None)
                
             
 
@@ -96,7 +119,7 @@ def process_request(data: dict):
             response_prompt = "Here's what I found for you"
         else:
             response_recommendations = []
-            response_prompt = "Sorry no item were found with what you asked, try something else.\n"
+            response_prompt = tr.translate("Sorry no item were found with what you asked, try something else.\n", dest=language).text
 
     except ValueError as e:
         logging.error(f"Error processing request: {e}")
